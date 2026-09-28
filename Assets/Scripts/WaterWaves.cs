@@ -34,14 +34,16 @@ public class WaterWaves : MonoBehaviour
         _mesh.RecalculateNormals(); // para que la luz rebote bien en las olas
     }
     
-    // Devuelve la altura de la ola en una posición del mundo
+    // Devuelve la altura de la ola en una posición del mundo.
+    // Uso InverseTransformPoint para convertir correctamente a espacio local,
+    // teniendo en cuenta posición, rotación Y escala del plano de agua.
+    // (La resta simple worldX - position.x ignoraba la escala y causaba desfasaje)
     public float GetHeightAt(float worldX, float worldZ)
     {
-        float localX = worldX - transform.position.x;
-        float localZ = worldZ - transform.position.z;
-        
-        return Mathf.Sin(Time.time * _waveFrequency + localX * _waveLength)
-            * Mathf.Cos(Time.time * _waveFrequency * 0.7f + localZ * _waveLength)
+        Vector3 localPos = transform.InverseTransformPoint(worldX, 0f, worldZ);
+
+        return Mathf.Sin(Time.time * _waveFrequency + localPos.x * _waveLength)
+            * Mathf.Cos(Time.time * _waveFrequency * 0.7f + localPos.z * _waveLength)
             * _waveHeight;
     }
 

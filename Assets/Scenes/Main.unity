@@ -348,7 +348,7 @@ Transform:
   m_GameObject: {fileID: 410087039}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 170, y: 407, z: -293}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -446,7 +446,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0aca4ad164c93194db8cad31321c5d96, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.72
+      value: -0.7
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0aca4ad164c93194db8cad31321c5d96, type: 3}
       propertyPath: m_LocalPosition.z
@@ -658,9 +658,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62e41ec7b1ecd024583ba1dfdfcff125, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterWave
-  _waveHeight: 3
-  _waveFrequency: 0.8
-  _waveLength: 0.3
+  _waveHeight: 1.8
+  _waveFrequency: 0.7
+  _waveLength: 0.2
 --- !u!1 &1348993236 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0aca4ad164c93194db8cad31321c5d96, type: 3}
@@ -679,15 +679,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   _maxHealth: 100
-  _speed: 7
-  _rotationSpeed: 60
-  _drag: 2
-  _bobAmplitude: 0.1
-  _bobFrequency: 2.5
+  _speed: 8
+  _rotationSpeed: 65
+  _drag: 2.25
   _bulletPrefab: {fileID: 0}
   _shootPoint: {fileID: 0}
   _shootCooldown: 0.5
-  _water: {fileID: 0}
+  _water: {fileID: 1237078483}
+  _submersionDepth: 0.7
+  _bobAmplitude: 0.25
+  _bobFrequency: 0.8
   _spawnPoint: {fileID: 0}
 --- !u!54 &1348993238
 Rigidbody:

@@ -18,17 +18,16 @@ public class PlayerController : Entity
     [SerializeField] private float _rotationSpeed = 200f;
     [SerializeField] private float _drag = 3f; // qué tan rápido frena la inercia al soltar
 
-    [Header("Agua")]
-    [SerializeField] private float _bobAmplitude = 0.05f; // altura del bamboleo en Y
-    [SerializeField] private float _bobFrequency = 1.2f;  // velocidad del bamboleo
-
     [Header("Disparo")]
     [SerializeField] private GameObject _bulletPrefab;
     [SerializeField] private Transform _shootPoint;
     [SerializeField] private float _shootCooldown = 0.5f;
 
     [Header("Agua")]
-    [SerializeField] private WaterWaves _water; //referencia al script de olas
+    [SerializeField] private WaterWaves _water;           // referencia al script de olas
+    [SerializeField] private float _submersionDepth = 0.06f; // cuánto queda siempre hundido bajo la superficie
+    [SerializeField] private float _bobAmplitude = 0.03f;    // variación del hundimiento (debe ser < submersionDepth)
+    [SerializeField] private float _bobFrequency = 0.8f;     // velocidad del bamboleo sutil
 
     [Header("Respawn")]
     [SerializeField] private Transform _spawnPoint;
@@ -38,14 +37,15 @@ public class PlayerController : Entity
     private Vector3 _currentVelocity; // velocidad actual (permite inercia)
     private Quaternion _lastTargetRotation;   // último giro que estaba haciendo
     private float _currentAngularVelocity;    // velocidad de giro actual (va decayendo)
-    private float _baseY;             // posición Y base del barco
+    private float _waterSurfaceY;     // Y del plano del agua (constante)
 
     protected override void Awake()
     {
         base.Awake();
         _rb = GetComponent<Rigidbody>();
-        _baseY = transform.position.y; // guardamos el Y inicial del barco
         _water = FindObjectOfType<WaterWaves>();
+        // Usamos la Y del plano del agua, no la del barco en el spawn
+        _waterSurfaceY = _water != null ? _water.transform.position.y : 0f;
     }
 
     private void Update()
@@ -82,10 +82,14 @@ public class PlayerController : Entity
         _rb.MoveRotation(Quaternion.RotateTowards(
             _rb.rotation, _lastTargetRotation, _currentAngularVelocity * Time.fixedDeltaTime));
 
-        // Movimiento con olas
-        float waveY = _water != null ? _water.GetHeightAt(_rb.position.x, _rb.position.z) : 0f;
+        // Movimiento con olas: calculo la nueva posición XZ primero,
+        // y evalúo la ola EN ESA posición para no tener desfasaje de un frame
         Vector3 newPosition = _rb.position + _currentVelocity * Time.fixedDeltaTime;
-        newPosition.y = _baseY + waveY;
+        float waveY = _water != null ? _water.GetHeightAt(newPosition.x, newPosition.z) : 0f;
+        // Bob sutil: varía cuánto se hunde, pero submersionDepth > bobAmplitude
+        // así el barco siempre queda al menos un poco bajo la superficie
+        float bob = Mathf.Sin(Time.time * _bobFrequency) * _bobAmplitude;
+        newPosition.y = _waterSurfaceY + waveY - _submersionDepth + bob;
         _rb.MovePosition(newPosition);
 
     }
