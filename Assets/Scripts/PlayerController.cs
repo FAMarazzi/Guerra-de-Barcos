@@ -2,7 +2,7 @@
  * @Author: Federico Marazzi
  * @Date: 9/21/2026, 1:06:19 PM
  * @LastEditors: Federico Marazzi
- * @LastEditTime: 9/25/2026, 11:36:58 AM
+ * @LastEditTime: 9/28/2026, 11:24:29 AM
  * @Description: 
  * @Copyright: Copyright (©)}) 2026 Federico Marazzi. All rights reserved.
  * @Email: federicoandresmarazzi@gmail.com
@@ -20,8 +20,9 @@ public class PlayerController : Entity
 
     [Header("Disparo")]
     [SerializeField] private GameObject _bulletPrefab;
-    [SerializeField] private Transform _shootPoint;
-    [SerializeField] private float _shootCooldown = 0.5f;
+    [SerializeField] private Transform[] _leftShootPoints;
+    [SerializeField] private Transform[] _rightShootPoints;
+    [SerializeField] private float _shootCooldown = 1f;
 
     [Header("Agua")]
     [SerializeField] private WaterWaves _water;           // referencia al script de olas
@@ -33,7 +34,8 @@ public class PlayerController : Entity
     [SerializeField] private Transform _spawnPoint;
 
     private Rigidbody _rb;
-    private float _shootTimer;
+    private float _leftShootTimer;
+    private float _rightShootTimer;
     private Vector3 _currentVelocity; // velocidad actual (permite inercia)
     private Quaternion _lastTargetRotation;   // último giro que estaba haciendo
     private float _currentAngularVelocity;    // velocidad de giro actual (va decayendo)
@@ -98,25 +100,36 @@ public class PlayerController : Entity
     private void HandleShooting()
     {
         // Bajamos el timer cada frame
-        if (_shootTimer > 0f)
-            _shootTimer -= Time.deltaTime;
+        if (_leftShootTimer > 0f) _leftShootTimer -= Time.deltaTime;
+        if (_rightShootTimer > 0f) _rightShootTimer -= Time.deltaTime;
 
-        // Disparo con click izquierdo o Space, si ya pasó el cooldown
-        if (Input.GetButtonDown("Fire1") && _shootTimer <= 0f)
+        // Click Izquierdo (Fire1) para disparar babor (izquierda)
+        if (Input.GetButtonDown("Fire1") && _leftShootTimer <= 0f)
         {
-            Shoot();
-            _shootTimer = _shootCooldown;
+            ShootSide(_leftShootPoints);
+            _leftShootTimer = _shootCooldown;
+        }
+
+        // Click Derecho (Fire2) para disparar estribor (derecha)
+        if (Input.GetButtonDown("Fire2") && _rightShootTimer <= 0f)
+        {
+            ShootSide(_rightShootPoints);
+            _rightShootTimer = _shootCooldown;
         }
     }
 
-    private void Shoot()
+    private void ShootSide(Transform[] points)
     {
-        if (_bulletPrefab == null || _shootPoint == null) return;
+        if (_bulletPrefab == null || points == null) return;
 
-        GameObject bullet = Instantiate(_bulletPrefab, _shootPoint.position, _shootPoint.rotation);
-        BulletController bc = bullet.GetComponent<BulletController>();
-        if (bc != null)
-            bc.Launch(_shootPoint.forward); // le pasamos la dirección hacia donde mira el cañón
+        foreach (Transform pt in points)
+        {
+            if (pt == null) continue;
+            GameObject bullet = Instantiate(_bulletPrefab, pt.position, pt.rotation);
+            BulletController bc = bullet.GetComponent<BulletController>();
+            if (bc != null)
+                bc.Launch(pt.forward); // le pasamos la dirección hacia donde mira el cañón
+        }
     }
 
     // Override de Entity: el jugador no se destruye, hace respawn
