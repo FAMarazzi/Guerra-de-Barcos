@@ -1,15 +1,19 @@
 using UnityEngine;
-using UnityEngine.AI; // necesario para NavMeshAgent
+using UnityEngine.AI;
 
-// Hereda de Entity (tiene vida, daño, muerte) y agrega IA de persecución
+// Hereda de Entity (tiene vida, daño, muerte) y agrega IA naval
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyController : Entity
 {
-    [Header("IA")]
-    [SerializeField] private float _detectionRange = 15f;  // rango para detectar al jugador
-    [SerializeField] private float _attackRange = 1.5f;    // rango para hacer daño por contacto
-    [SerializeField] private float _contactDamage = 10f;   // daño al tocar al jugador
-    [SerializeField] private float _attackCooldown = 1f;   // tiempo entre golpes
+    [Header("IA Naval")]
+    [SerializeField] private float _detectionRange = 30f;
+    [SerializeField] private float _attackRange = 15f;
+    [SerializeField] private float _attackCooldown = 2f;
+
+    [Header("Disparo")]
+    [SerializeField] private GameObject _bulletPrefab;
+    [SerializeField] private Transform[] _leftShootPoints;
+    [SerializeField] private Transform[] _rightShootPoints;
 
     private NavMeshAgent _agent;
     private Transform _player;
@@ -19,11 +23,13 @@ public class EnemyController : Entity
     {
         base.Awake(); // inicializa vida desde Entity
         _agent = GetComponent<NavMeshAgent>();
+        // Frenamos un poco antes del rango máximo para tener margen
+        _agent.stoppingDistance = _attackRange * 0.8f; 
     }
 
     private void Start()
     {
-        // Buscamos al jugador por tag. Acordate de tagear el tanque jugador como "Player" en Unity
+        // Buscamos al jugador por tag.
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             _player = playerObj.transform;
@@ -35,39 +41,91 @@ public class EnemyController : Entity
 
         float distanceToPlayer = Vector3.Distance(transform.position, _player.position);
 
+        // Si está en rango visual, decide qué hacer
         if (distanceToPlayer <= _detectionRange)
-            ChasePlayer();
+        {
+            ChaseAndPosition();
+        }
         else
-            _agent.ResetPath(); // para si el jugador está lejos
-
-        if (distanceToPlayer <= _attackRange)
-            TryAttack();
+        {
+            _agent.ResetPath(); // El jugador se escapó
+        }
 
         if (_attackTimer > 0f)
             _attackTimer -= Time.deltaTime;
     }
 
-    private void ChasePlayer()
+    private void ChaseAndPosition()
     {
-        _agent.SetDestination(_player.position);
+        float distance = Vector3.Distance(transform.position, _player.position);
+
+        if (distance > _attackRange)
+        {
+            // Aún está lejos, nos acercamos normal de frente
+            _agent.isStopped = false;
+            _agent.SetDestination(_player.position);
+        }
+        else
+        {
+            // Ya está a rango de disparo. Frenamos y nos ponemos de costado.
+            _agent.isStopped = true;
+            AlignBroadside();
+        }
     }
 
-    private void TryAttack()
+    private void AlignBroadside()
     {
-        if (_attackTimer > 0f) return;
+        // Vector que apunta hacia el jugador
+        Vector3 dirToPlayer = (_player.position - transform.position).normalized;
+        dirToPlayer.y = 0f;
 
-        // Ataque de contacto: busca IDamageable en el jugador y le hace daño
-        IDamageable target = _player.GetComponent<IDamageable>();
-        if (target != null)
-            target.TakeDamage(_contactDamage);
+        // Vector3.Dot devuelve > 0 si el jugador está a nuestra derecha, < 0 si está a la izquierda
+        float dotRight = Vector3.Dot(transform.right, dirToPlayer);
+
+        bool useRightCannons = dotRight > 0;
+        Vector3 targetForward;
+
+        if (useRightCannons)
+        {
+            // Queremos que nuestro estribor (derecha) apunte al jugador
+            targetForward = Vector3.Cross(dirToPlayer, Vector3.up);
+        }
+        else
+        {
+            // Queremos que nuestro babor (izquierda) apunte al jugador
+            targetForward = Vector3.Cross(Vector3.up, dirToPlayer);
+        }
+
+        // Girar el barco suavemente hacia la posición de disparo
+        Quaternion targetRotation = Quaternion.LookRotation(targetForward);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 2f);
+
+        // Si ya estamos más o menos paralelos (el Dot casi en 1 o -1), ¡Fuego!
+        if (Mathf.Abs(dotRight) > 0.85f)
+        {
+            TryShoot(useRightCannons ? _rightShootPoints : _leftShootPoints);
+        }
+    }
+
+    private void TryShoot(Transform[] points)
+    {
+        if (_attackTimer > 0f || _bulletPrefab == null) return;
+
+        foreach (Transform pt in points)
+        {
+            if (pt == null) continue;
+            GameObject bullet = Instantiate(_bulletPrefab, pt.position, pt.rotation);
+            BulletController bc = bullet.GetComponent<BulletController>();
+            if (bc != null)
+                bc.Launch(pt.forward);
+        }
 
         _attackTimer = _attackCooldown;
     }
 
-    // Override de Entity: el enemigo simplemente se destruye al morir
     protected override void Die()
     {
-        // Acá podés instanciar un efecto de explosión si querés
+        Debug.Log("Enemigo destruido");
         Destroy(gameObject);
     }
 }
