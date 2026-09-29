@@ -1,3 +1,13 @@
+/**FileHeader
+ * @Author: Federico Marazzi
+ * @Date: 9/21/2026, 1:06:19 PM
+ * @LastEditors: Federico Marazzi
+ * @LastEditTime: 9/29/2026, 2:46:00 PM
+ * @Description: 
+ * @Copyright: Copyright (©)}) 2026 Federico Marazzi. All rights reserved.
+ * @Email: federicoandresmarazzi@gmail.com
+ */
+
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]

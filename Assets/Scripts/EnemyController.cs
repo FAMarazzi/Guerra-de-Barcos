@@ -1,3 +1,13 @@
+/**FileHeader
+ * @Author: Federico Marazzi
+ * @Date: 9/21/2026, 1:06:19 PM
+ * @LastEditors: Federico Marazzi
+ * @LastEditTime: 9/29/2026, 2:46:00 PM
+ * @Description: 
+ * @Copyright: Copyright (©)}) 2026 Federico Marazzi. All rights reserved.
+ * @Email: federicoandresmarazzi@gmail.com
+ */
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,9 +25,16 @@ public class EnemyController : Entity
     [SerializeField] private Transform[] _leftShootPoints;
     [SerializeField] private Transform[] _rightShootPoints;
 
+    [Header("Agua")]
+    [SerializeField] private WaterWaves _water;           // referencia al script de olas
+    [SerializeField] private float _submersionDepth = 0.06f; // cuánto queda hundido bajo la superficie
+    [SerializeField] private float _bobAmplitude = 0.03f;    // variación del hundimiento
+    [SerializeField] private float _bobFrequency = 0.8f;     // velocidad del bamboleo sutil
+
     private NavMeshAgent _agent;
     private Transform _player;
     private float _attackTimer;
+    private float _waterSurfaceY;
 
     protected override void Awake()
     {
@@ -25,6 +42,9 @@ public class EnemyController : Entity
         _agent = GetComponent<NavMeshAgent>();
         // Frenamos un poco antes del rango máximo para tener margen
         _agent.stoppingDistance = _attackRange * 0.8f; 
+        
+        _water = FindObjectOfType<WaterWaves>();
+        _waterSurfaceY = _water != null ? _water.transform.position.y : 0f;
     }
 
     private void Start()
@@ -37,6 +57,8 @@ public class EnemyController : Entity
 
     private void Update()
     {
+        HandleWaterBob();
+
         if (_isDead || _player == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, _player.position);
@@ -53,6 +75,22 @@ public class EnemyController : Entity
 
         if (_attackTimer > 0f)
             _attackTimer -= Time.deltaTime;
+    }
+
+    private void HandleWaterBob()
+    {
+        if (_water != null && _agent != null)
+        {
+            // Calculamos la altura de la ola en la posición del enemigo
+            float waveY = _water.GetHeightAt(transform.position.x, transform.position.z);
+            float bob = Mathf.Sin(Time.time * _bobFrequency) * _bobAmplitude;
+            
+            // Ajustamos el "desfase" del modelo respecto a la malla de navegación (NavMesh)
+            float newYOffset = _waterSurfaceY + waveY - _submersionDepth + bob - transform.position.y + _agent.baseOffset;
+            
+            // Lo aplicamos directo sin Lerp para que no arranquen flotando en el aire
+            _agent.baseOffset = newYOffset;
+        }
     }
 
     private void ChaseAndPosition()
