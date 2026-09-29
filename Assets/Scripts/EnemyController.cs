@@ -163,6 +163,10 @@ public class EnemyController : Entity
 
     protected override void Die()
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnEnemyDied();
+        }
         Debug.Log("Enemigo destruido");
         Destroy(gameObject);
     }
