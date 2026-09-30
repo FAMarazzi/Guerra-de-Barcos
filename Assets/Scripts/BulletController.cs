@@ -19,6 +19,8 @@ public class BulletController : MonoBehaviour
 
     private Rigidbody _rb;
 
+    private string _shooterTag;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -31,11 +33,10 @@ public class BulletController : MonoBehaviour
         Destroy(gameObject, _lifeTime);
     }
 
-    // Se llama desde PlayerController al disparar
-    public void Launch(Vector3 direction)
+    // Se llama desde PlayerController o EnemyController al disparar
+    public void Launch(Vector3 direction, string shooterTag)
     {
-        // BUG del profe: multiplicaba por Time.fixedDeltaTime → bala lentísima
-        // La velocidad del Rigidbody ya es en unidades/segundo, no necesita delta time
+        _shooterTag = shooterTag;
         _rb.linearVelocity = direction.normalized * _speed;
     }
 
@@ -52,6 +53,10 @@ public class BulletController : MonoBehaviour
 
     private void Hit(GameObject target)
     {
+        // Si la bala choca contra quien la disparó (o alguien de su bando), ignoramos
+        if (!string.IsNullOrEmpty(_shooterTag) && target.CompareTag(_shooterTag)) 
+            return;
+
         IDamageable damageable = target.GetComponent<IDamageable>();
         if (damageable != null)
             damageable.TakeDamage(_damage);

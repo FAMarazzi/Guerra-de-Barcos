@@ -128,7 +128,7 @@ public class PlayerController : Entity
             GameObject bullet = Instantiate(_bulletPrefab, pt.position, pt.rotation);
             BulletController bc = bullet.GetComponent<BulletController>();
             if (bc != null)
-                bc.Launch(pt.forward); // le pasamos la dirección hacia donde mira el cañón
+                bc.Launch(pt.forward, gameObject.tag); // le pasamos la dirección y nuestro tag
         }
     }
 

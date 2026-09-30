@@ -155,7 +155,7 @@ public class EnemyController : Entity
             GameObject bullet = Instantiate(_bulletPrefab, pt.position, pt.rotation);
             BulletController bc = bullet.GetComponent<BulletController>();
             if (bc != null)
-                bc.Launch(pt.forward);
+                bc.Launch(pt.forward, gameObject.tag); // le pasamos la dirección y su tag
         }
 
         _attackTimer = _attackCooldown;

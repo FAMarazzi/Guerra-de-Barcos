@@ -23,7 +23,16 @@ public class GoalZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             if (GameManager.Instance != null)
-                GameManager.Instance.WinGame();
+            {
+                if (GameManager.Instance.AreAllEnemiesDefeated())
+                {
+                    GameManager.Instance.WinGame();
+                }
+                else
+                {
+                    Debug.Log("¡Aún quedan piratas vivos! Mátalos antes de entrar.");
+                }
+            }
         }
     }
 }

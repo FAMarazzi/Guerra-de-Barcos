@@ -28,9 +28,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (_goalZone != null)
-            _goalZone.SetActive(false); // Ocultar meta al inicio
-
         EnemyController[] enemies = FindObjectsOfType<EnemyController>();
         _enemiesAlive = enemies.Length;
         Debug.Log("Enemigos totales: " + _enemiesAlive);
@@ -43,15 +40,13 @@ public class GameManager : MonoBehaviour
 
         if (_enemiesAlive <= 0)
         {
-            UnlockGoal();
+            Debug.Log("¡Todos derrotados! Ya puedes entrar al puerto.");
         }
     }
 
-    private void UnlockGoal()
+    public bool AreAllEnemiesDefeated()
     {
-        Debug.Log("¡Todos derrotados! Ve al puerto.");
-        if (_goalZone != null)
-            _goalZone.SetActive(true);
+        return _enemiesAlive <= 0;
     }
 
     public void WinGame()
