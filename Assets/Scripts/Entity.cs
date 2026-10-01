@@ -36,6 +36,10 @@ public abstract class Entity : MonoBehaviour, IDamageable
         _currentHealth -= amount;
         _currentHealth = Mathf.Max(_currentHealth, 0f); // que no baje de 0
 
+        // Si es el jugador, actualizamos la barra de vida
+        if (CompareTag("Player") && UIManager.Instance != null)
+            UIManager.Instance.UpdateHealthBar(_currentHealth, _maxHealth);
+
         OnDamaged(amount); // hook para efectos visuales (shake, color, etc.)
 
         if (_currentHealth <= 0f)

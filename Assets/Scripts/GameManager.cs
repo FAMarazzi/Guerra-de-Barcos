@@ -38,10 +38,11 @@ public class GameManager : MonoBehaviour
         _enemiesAlive--;
         Debug.Log("Enemigo destruido. Quedan: " + _enemiesAlive);
 
+        if (UIManager.Instance != null)
+            UIManager.Instance.UpdateEnemyCount(_enemiesAlive);
+
         if (_enemiesAlive <= 0)
-        {
             Debug.Log("¡Todos derrotados! Ya puedes entrar al puerto.");
-        }
     }
 
     public bool AreAllEnemiesDefeated()
@@ -52,5 +53,7 @@ public class GameManager : MonoBehaviour
     public void WinGame()
     {
         Debug.Log("¡NIVEL COMPLETADO!");
+        if (UIManager.Instance != null)
+            UIManager.Instance.ShowWinScreen();
     }
 }

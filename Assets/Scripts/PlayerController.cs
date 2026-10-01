@@ -135,8 +135,9 @@ public class PlayerController : Entity
     // Override de Entity: el jugador no se destruye, hace respawn
     protected override void Die()
     {
-        Debug.Log("Jugador muerto - respawneando");
-        Respawn();
+        Debug.Log("Jugador muerto");
+        if (UIManager.Instance != null)
+            UIManager.Instance.ShowLoseScreen();
     }
 
     private void Respawn()
