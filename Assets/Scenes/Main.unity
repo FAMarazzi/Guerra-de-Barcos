@@ -4824,10 +4824,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ef13dc65d2214a41adf9eca5e73a672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  _maxHealth: 100
-  _detectionRange: 50
-  _attackRange: 20
-  _attackCooldown: 2
+  _maxHealth: 150
+  _detectionRange: 90
+  _attackRange: 45
+  _attackCooldown: 2.5
   _bulletPrefab: {fileID: 2698997017182257946, guid: 094319899e4340f49b48fe1d6f96550c, type: 3}
   _leftShootPoints:
   - {fileID: 1113646370}
@@ -6674,7 +6674,7 @@ MonoBehaviour:
   - {fileID: 1061611847}
   - {fileID: 1262949439}
   - {fileID: 1375077933}
-  _shootCooldown: 0.5
+  _shootCooldown: 2
   _water: {fileID: 1237078483}
   _submersionDepth: 0.8
   _bobAmplitude: 0.2
