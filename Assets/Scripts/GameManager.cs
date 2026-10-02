@@ -2,7 +2,7 @@
  * @Author: Federico Marazzi
  * @Date: 9/29/2026, 3:45:00 PM
  * @LastEditors: Federico Marazzi
- * @LastEditTime: 9/29/2026, 3:45:00 PM
+ * @LastEditTime: 10/2/2026, 9:21:38 AM
  * @Description: 
  * @Copyright: Copyright (©)}) 2026 Federico Marazzi. All rights reserved.
  * @Email: federicoandresmarazzi@gmail.com
@@ -42,7 +42,14 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.UpdateEnemyCount(_enemiesAlive);
 
         if (_enemiesAlive <= 0)
+        {
             Debug.Log("¡Todos derrotados! Ya puedes entrar al puerto.");
+
+            // El mar se calma cuando la amenaza pirata desaparece
+            WaterWaves water = FindObjectOfType<WaterWaves>();
+            if (water != null)
+                water.CalmDown();
+        }
     }
 
     public bool AreAllEnemiesDefeated()

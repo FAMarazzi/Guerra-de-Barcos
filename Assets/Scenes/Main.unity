@@ -901,7 +901,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -16.6, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &194370873
@@ -2848,9 +2848,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   _maxHealth: 100
-  _detectionRange: 30
-  _attackRange: 15
-  _attackCooldown: 2
+  _detectionRange: 90
+  _attackRange: 40
+  _attackCooldown: 2.5
   _bulletPrefab: {fileID: 2698997017182257946, guid: 094319899e4340f49b48fe1d6f96550c, type: 3}
   _leftShootPoints:
   - {fileID: 186577550}
@@ -3458,7 +3458,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -16.19, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &711405089
@@ -4246,9 +4246,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   _maxHealth: 100
-  _detectionRange: 30
-  _attackRange: 15
-  _attackCooldown: 2
+  _detectionRange: 90
+  _attackRange: 40
+  _attackCooldown: 2.5
   _bulletPrefab: {fileID: 2698997017182257946, guid: 094319899e4340f49b48fe1d6f96550c, type: 3}
   _leftShootPoints:
   - {fileID: 1608809438}
@@ -4628,7 +4628,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 35.45}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &971313769
@@ -4826,7 +4826,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   _maxHealth: 150
   _detectionRange: 90
-  _attackRange: 45
+  _attackRange: 40
   _attackCooldown: 2.5
   _bulletPrefab: {fileID: 2698997017182257946, guid: 094319899e4340f49b48fe1d6f96550c, type: 3}
   _leftShootPoints:
@@ -5152,7 +5152,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 136.36}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1007446400
@@ -5289,7 +5289,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 99}
+  m_AnchoredPosition: {x: 0, y: 105.02}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1021545287
@@ -5882,7 +5882,7 @@ Transform:
   m_GameObject: {fileID: 1208578641}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 113.829346, y: 0.00002, z: 45.64452}
+  m_LocalPosition: {x: 113.829346, y: 0.00002, z: 34.64452}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6223,6 +6223,7 @@ MonoBehaviour:
   _waveHeight: 1.8
   _waveFrequency: 0.7
   _waveLength: 0.2
+  _calmSpeed: 0.3
 --- !u!1001 &1240640685
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6661,7 +6662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 733d8c969e0f0f34c8603cc2aefb49af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  _maxHealth: 100
+  _maxHealth: 120
   _speed: 8
   _rotationSpeed: 65
   _drag: 2.25
@@ -7559,7 +7560,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -13.29, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1694997222
