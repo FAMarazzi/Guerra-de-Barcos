@@ -120,15 +120,15 @@ public class PlayerController : Entity
 
     private void ShootSide(Transform[] points)
     {
-        if (_bulletPrefab == null || points == null) return;
+        if (points == null) return;
 
         foreach (Transform pt in points)
         {
             if (pt == null) continue;
-            GameObject bullet = Instantiate(_bulletPrefab, pt.position, pt.rotation);
-            BulletController bc = bullet.GetComponent<BulletController>();
-            if (bc != null)
-                bc.Launch(pt.forward, gameObject.tag); // le pasamos la dirección y nuestro tag
+            // Usamos el pool en lugar de Instantiate
+            if (BulletPool.Instance == null) return;
+            BulletController bc = BulletPool.Instance.Get(pt.position, pt.rotation);
+            bc.Launch(pt.forward, gameObject.tag);
         }
     }
 

@@ -8,6 +8,7 @@
  * @Email: federicoandresmarazzi@gmail.com
  */
 
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -28,9 +29,18 @@ public class BulletController : MonoBehaviour
         _rb.collisionDetectionMode = CollisionDetectionMode.Continuous; // no traspasa
     }
 
-    private void Start()
+    // OnEnable se llama cada vez que el pool activa la bala (no solo al crear)
+    private void OnEnable()
     {
-        Destroy(gameObject, _lifeTime);
+        _shooterTag = string.Empty;
+        _rb.linearVelocity = Vector3.zero;
+        StartCoroutine(ReturnAfterLifetime());
+    }
+
+    private IEnumerator ReturnAfterLifetime()
+    {
+        yield return new WaitForSeconds(_lifeTime);
+        ReturnToPool();
     }
 
     // Se llama desde PlayerController o EnemyController al disparar
@@ -53,14 +63,22 @@ public class BulletController : MonoBehaviour
 
     private void Hit(GameObject target)
     {
-        // Si la bala choca contra quien la disparó (o alguien de su bando), ignoramos
-        if (!string.IsNullOrEmpty(_shooterTag) && target.CompareTag(_shooterTag)) 
+        if (!string.IsNullOrEmpty(_shooterTag) && target.CompareTag(_shooterTag))
             return;
 
         IDamageable damageable = target.GetComponent<IDamageable>();
         if (damageable != null)
             damageable.TakeDamage(_damage);
 
-        Destroy(gameObject);
+        ReturnToPool();
+    }
+
+    private void ReturnToPool()
+    {
+        StopAllCoroutines();
+        if (BulletPool.Instance != null)
+            BulletPool.Instance.Return(this);
+        else
+            Destroy(gameObject); // fallback si no hay pool en escena
     }
 }

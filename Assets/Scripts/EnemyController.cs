@@ -147,15 +147,14 @@ public class EnemyController : Entity
 
     private void TryShoot(Transform[] points)
     {
-        if (_attackTimer > 0f || _bulletPrefab == null) return;
+        if (_attackTimer > 0f) return;
+        if (BulletPool.Instance == null) return;
 
         foreach (Transform pt in points)
         {
             if (pt == null) continue;
-            GameObject bullet = Instantiate(_bulletPrefab, pt.position, pt.rotation);
-            BulletController bc = bullet.GetComponent<BulletController>();
-            if (bc != null)
-                bc.Launch(pt.forward, gameObject.tag); // le pasamos la dirección y su tag
+            BulletController bc = BulletPool.Instance.Get(pt.position, pt.rotation);
+            bc.Launch(pt.forward, gameObject.tag);
         }
 
         _attackTimer = _attackCooldown;
